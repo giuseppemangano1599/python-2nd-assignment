@@ -87,77 +87,160 @@ class myApp:
 
     # per ovvi motivi, i metodi della gui sono effettuano un richiamo ai metodi delle classi Studente e Archivio contenute in archivio.py
     def inserisci_studente(self, evento):
-        cognome = simpledialog.askstring("Inserimento cognome", "Inserisci il cognome dello studente:")
-        nome = simpledialog.askstring("Inserimento nome", "Inserisci il nome dello studente:")
-        matricola = simpledialog.askinteger("Inserimento matricola", "Inserisci la matricola dello studente:")
-        studente = Studente(cognome, nome, matricola)
-        note = simpledialog.askstring("Inserimento note", "Inserisci le note relative allo studente:")
-        if self.archivio.inserisci(studente, note) == True:
-            self.box_studenti.insert(tk.END, cognome + " " + nome + " - Matricola: " + str(matricola) + " - Note: " + note)
-            messagebox.showinfo("Inserimento avvenuto con successo", "Lo studente " + cognome + " " + nome + " è stato aggiunto con la matricola " + str(matricola) + ".") 
-        else:
-            messagebox.showerror("Inserimento annullato.", "Non è stato possibile inserire lo studente.")
+        while True:
+            try:
+                cognome = simpledialog.askstring("Inserimento cognome", "Inserisci il cognome dello studente:")
+                if cognome is None:
+                    messagebox.showwarning("Inserimento annullato", "Inserimento annullato da parte dell'utente.")
+                    break # esco dal loop se l'utente annulla l'operazione
+                
+                nome = simpledialog.askstring("Inserimento nome", "Inserisci il nome dello studente:")
+                if nome is None:
+                    messagebox.showwarning("Inserimento annullato", "Inserimento annullato da parte dell'utente.")
+                    break
 
+                matricola = simpledialog.askinteger("Inserimento matricola", "Inserisci la matricola dello studente:")
+                if matricola is None:
+                    messagebox.showwarning("Inserimento annullato", "Inserimento annullato da parte dell'utente.")
+                    break
+
+                studente = Studente(cognome, nome, matricola)
+
+                note = simpledialog.askstring("Inserimento note", "Inserisci le note relative allo studente:")
+                if note is None:
+                    messagebox.showwarning("Inserimento annullato", "Inserimento annullato da parte dell'utente.")
+                    break
+
+                if self.archivio.inserisci(studente, note) == True:
+                    self.box_studenti.insert(tk.END, cognome + " " + nome + " - Matricola: " + str(matricola) + " - Note: " + note)
+                    messagebox.showinfo("Inserimento avvenuto con successo", "Lo studente " + cognome + " " + nome + " è stato aggiunto con la matricola " + str(matricola) + ".")
+                    break  # esco dal loop se l'inserimento è avvenuto con successo
+                else:
+                    messagebox.showerror("Inserimento annullato", "Non è stato possibile inserire lo studente.\nRiprova.")
+            except (ValueError,TypeError) as e:
+                    messagebox.showerror("Inserimento errato", "Non è stato possibile inserire lo studente.\n" + str(e))
 
     def modifica_studente(self, evento):
-        matricola = simpledialog.askinteger("Inserimento matricola", "Inserisci la matricola dello studente che vuoi modificare:")
-        if self.archivio.elimina(matricola) == True:
-            self.inserisci_studente(None) # passo di None come argomento "evento" fittizio sennò avviene un'eccezione
-            self.ricarica_box()
-        else:
-            messagebox.showerror("Modifica annullata", "Non è stato possibile modificare lo studente. Controlla se hai inserito correttamente la matricola.")
+        while True:
+            matricola = simpledialog.askinteger("Inserimento matricola", "Inserisci la matricola dello studente che vuoi modificare:")
+            if matricola is None:
+                messagebox.showwarning("Inserimento annullato", "Inserimento annullato da parte dell'utente.")
+                break
+            if self.archivio.elimina(matricola) == True:
+                self.inserisci_studente(None) # passo di None come argomento "evento" fittizio sennò avviene un'eccezione
+                self.ricarica_box()
+                break
+            else:
+                messagebox.showerror("Modifica annullata", "Non è stato possibile modificare lo studente. Controlla se hai inserito correttamente la matricola e riprova.")
+                break
 
 
     def elimina_studente(self, evento):
-        matricola = simpledialog.askinteger("Inserimento matricola", "Inserisci la matricola dello studente che vuoi eliminare:")
-        if self.archivio.elimina(matricola) == True:
+        while True:
+            matricola = simpledialog.askinteger("Inserimento matricola", "Inserisci la matricola dello studente che vuoi eliminare:")
+            if matricola is None:
+                messagebox.showwarning("Inserimento annullato", "Inserimento annullato da parte dell'utente.")
+                break
             studente = self.archivio.studente(matricola)
-            self.ricarica_box()
-            messagebox.showinfo("Eliminazione avvenuta con successo", "Lo studente " + studente.get_cognome() + " " + studente.get_nome() + " è stato eliminato.") 
-        else:
-            messagebox.showerror("Eliminazione annullata", "Non è stato possibile eliminare lo studente. Controlla se hai inserito correttamente la matricola.")
-
+            if self.archivio.elimina(matricola) == True:
+                self.ricarica_box()
+                messagebox.showinfo("Eliminazione avvenuta con successo", "Lo studente " + studente.get_cognome() + " " + studente.get_nome() + " è stato eliminato.")
+                break 
+            else:
+                messagebox.showerror("Eliminazione annullata", "Non è stato possibile eliminare lo studente. Controlla se hai inserito correttamente la matricola.")
+                break
 
     def inserisci_esame(self, evento):
-        matricola = simpledialog.askinteger("Inserimento matricola", "Inserisci la matricola dello studente:")
-        codice = simpledialog.askstring("Inserimento codice", "Inserisci il codice dell'esame che vuoi aggiungere:")
-        voto = simpledialog.askinteger("Inserimento voto", "Inserisci il voto dell'esame:")
-        if self.archivio.registra_esame(matricola, codice, voto) == True:
-            self.ricarica_box()
-            messagebox.showinfo("Inserimento avvenuto con successo", "L'esame " + codice + " è stato aggiunto per la matricola " + str(matricola) + " con la valutazione di " + str(voto) + ".") 
-        else:
-            messagebox.showerror("Inserimento annullato.", "Non è stato possibile inserire l'esame. Controlla il voto o se hai inserito correttamente la matricola")
+        while True:
+            matricola = simpledialog.askinteger("Inserimento matricola", "Inserisci la matricola dello studente:")
+            if matricola is None:
+                messagebox.showwarning("Inserimento annullato", "Inserimento annullato da parte dell'utente.")
+                break
+            if self.archivio.studente(matricola) == None:
+                messagebox.showerror("Inserimento annullato.", "Non è stato possibile inserire l'esame. Controlla il voto o se hai inserito correttamente la matricola")
+                break
+
+            codice = simpledialog.askstring("Inserimento codice", "Inserisci il codice dell'esame che vuoi aggiungere:")
+            if codice is None:
+                messagebox.showwarning("Inserimento annullato", "Inserimento annullato da parte dell'utente.")
+                break
+
+            voto = simpledialog.askinteger("Inserimento voto", "Inserisci il voto dell'esame:")
+            if voto is None:
+                messagebox.showwarning("Inserimento annullato", "Inserimento annullato da parte dell'utente.")
+                break
+
+            if self.archivio.registra_esame(matricola, codice, voto) == True:
+                self.ricarica_box()
+                messagebox.showinfo("Inserimento avvenuto con successo", "L'esame " + codice + " è stato aggiunto per la matricola " + str(matricola) + " con la valutazione di " + str(voto) + ".")
+                break 
+            else:
+                messagebox.showerror("Inserimento annullato.", "Non è stato possibile inserire l'esame. Controlla il voto o se hai inserito correttamente la matricola.")
+                break
 
 
     def modifica_esame(self, evento):
-        matricola = simpledialog.askinteger("Inserimento matricola", "Inserisci la matricola dello studente:")
-        codice = simpledialog.askstring("Inserimento codice", "Inserisci il codice dell'esame che vuoi modificare:")
-        voto = simpledialog.askinteger("Inserimento voto", "Inserisci il voto dell'esame:")
-        if self.archivio.modifica_voto(matricola, codice, voto) == True:
-            self.ricarica_box()
-            messagebox.showinfo("Modifica avvenuta con successo", "L'esame " + codice + " è stato modificato per la matricola " + str(matricola) + " con la valutazione di " + str(voto) + ".") 
-        else:
-            messagebox.showerror("Modifica annullata", "Non è stato possibile modificare l'esame. Controlla il voto (>= 18) o se hai inserito correttamente la matricola")
+        while True:
+            matricola = simpledialog.askinteger("Inserimento matricola", "Inserisci la matricola dello studente:")
+            if matricola is None:
+                messagebox.showwarning("Inserimento annullato", "Inserimento annullato da parte dell'utente.")
+                break
+
+            codice = simpledialog.askstring("Inserimento codice", "Inserisci il codice dell'esame che vuoi modificare:")
+            if codice is None:
+                messagebox.showwarning("Inserimento annullato", "Inserimento annullato da parte dell'utente.")
+                break
+
+            voto = simpledialog.askinteger("Inserimento voto", "Inserisci il voto dell'esame:")
+            if voto is None:
+                messagebox.showwarning("Inserimento annullato", "Inserimento annullato da parte dell'utente.")
+                break
+
+            if self.archivio.modifica_voto(matricola, codice, voto) == True:
+                self.ricarica_box()
+                messagebox.showinfo("Modifica avvenuta con successo", "L'esame " + codice + " è stato modificato per la matricola " + str(matricola) + " con la valutazione di " + str(voto) + ".") 
+                break
+            else:
+                messagebox.showerror("Modifica annullata", "Non è stato possibile modificare l'esame. Controlla il voto (>= 18) o se hai inserito correttamente la matricola")
+                break
 
 
     def elimina_esame(self, evento):
-        matricola = simpledialog.askinteger("Inserimento matricola", "Inserisci la matricola dello studente:")
-        codice = simpledialog.askstring("Inserimento codice", "Inserisci il codice dell'esame che vuoi eliminare:")
-        if self.archivio.cancella_esame(matricola, codice) == True:
-            self.ricarica_box()
-            messagebox.showinfo("Eliminazione avvenuta con successo", "L'esame " + codice + " è stato eliminato per la matricola " + str(matricola) + ".") 
-        else:
-            messagebox.showerror("Eliminazione annullata", "Non è stato possibile eliminare l'esame. Controlla se lo studente ha sostenuto l'esame o se hai inserito correttamente la matricola")
+        while True:
+            matricola = simpledialog.askinteger("Inserimento matricola", "Inserisci la matricola dello studente:")
+            if matricola is None:
+                messagebox.showwarning("Inserimento annullato", "Inserimento annullato da parte dell'utente.")
+                break
+
+            codice = simpledialog.askstring("Inserimento codice", "Inserisci il codice dell'esame che vuoi eliminare:")
+            if codice is None:
+                messagebox.showwarning("Inserimento annullato", "Inserimento annullato da parte dell'utente.")
+                break
+
+            if self.archivio.cancella_esame(matricola, codice) == True:
+                self.ricarica_box()
+                messagebox.showinfo("Eliminazione avvenuta con successo", "L'esame " + codice + " è stato eliminato per la matricola " + str(matricola) + ".")
+                break 
+            else:
+                messagebox.showerror("Eliminazione annullata", "Non è stato possibile eliminare l'esame. Controlla se lo studente ha sostenuto l'esame o se hai inserito correttamente la matricola")
+                break
 
 
     def media(self, evento):
-        matricola = simpledialog.askinteger("Inserimento matricola", "Inserisci la matricola dello studente di cui vuoi calcolare la media:")
-        studente = self.archivio.studente(matricola)
-        media = self.archivio.media(matricola)
-        if media != None:
-            messagebox.showinfo("Calcolo della media", "Lo studente " + studente.get_cognome() + " " + studente.get_nome() + " ha la media del " + str(media) + ".") 
-        else:
-            messagebox.showerror("Errore media", "Si è verificato un errore durante il calcolo della media.")
+        while True:
+            matricola = simpledialog.askinteger("Inserimento matricola", "Inserisci la matricola dello studente di cui vuoi calcolare la media:")
+            if matricola is None:
+                messagebox.showwarning("Inserimento annullato", "Inserimento annullato da parte dell'utente.")
+                break
+
+            studente = self.archivio.studente(matricola)
+            media = self.archivio.media(matricola)
+            if media != None:
+                messagebox.showinfo("Calcolo della media", "Lo studente " + studente.get_cognome() + " " + studente.get_nome() + " ha la media del " + str(media) + ".") 
+                break
+            else:
+                messagebox.showerror("Errore media", "Si è verificato un errore durante il calcolo della media.")
+                break
 
 
     def salva_file(self, evento):

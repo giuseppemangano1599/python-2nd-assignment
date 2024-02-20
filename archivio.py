@@ -30,11 +30,11 @@ class Studente:
         listaesami: lista di tuple (codice -- str, voto--int positivo >= 18 e <33)"""
 
         # controllo dei tipi
-        if type(cognome) != str:
-            raise TypeError("Il cognome deve essere una stringa.")
+        if type(cognome) != str or cognome == "":
+            raise TypeError("Il cognome deve essere una stringa non vuota.")
 
-        if type(nome) != str:
-            raise TypeError("Il nome deve essere una stringa.")
+        if type(nome) != str or nome == "":
+            raise TypeError("Il nome deve essere una stringa non vuota.")
         
         if type(matricola) != int or matricola <= 0:
             raise ValueError("La matricola deve essere un intero positivo.") # fare due controlli su "matricola" sarebbe ridondante, meglio accorparli e restituire ValueError
@@ -49,7 +49,7 @@ class Studente:
         return self.cognome
     
     def set_cognome(self, cognome):
-        if type(cognome) != str:
+        if type(cognome) != str or cognome == "":
             raise TypeError("Il cognome deve essere una stringa.")
 
         self.cognome = cognome
@@ -58,7 +58,7 @@ class Studente:
         return self.nome
     
     def set_nome(self, nome):
-        if type(nome) != str:
+        if type(nome) != str or nome == "":
             raise TypeError("Il nome deve essere una stringa.")
 
         self.nome = nome
