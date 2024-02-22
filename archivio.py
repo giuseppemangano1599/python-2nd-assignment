@@ -30,13 +30,13 @@ class Studente:
         listaesami: lista di tuple (codice -- str, voto--int positivo >= 18 e <33)"""
 
         # controllo dei tipi
-        if type(cognome) != str or cognome == "":
+        if not isinstance(cognome, str) or cognome == "":
             raise TypeError("Il cognome deve essere una stringa non vuota.")
 
-        if type(nome) != str or nome == "":
+        if not isinstance(nome, str) or nome == "":
             raise TypeError("Il nome deve essere una stringa non vuota.")
-        
-        if type(matricola) != int or matricola <= 0:
+
+        if not isinstance(matricola, int) or matricola <= 0:
             raise ValueError("La matricola deve essere un intero positivo.") # fare due controlli su "matricola" sarebbe ridondante, meglio accorparli e restituire ValueError
 
         self.cognome = cognome
@@ -49,7 +49,7 @@ class Studente:
         return self.cognome
     
     def set_cognome(self, cognome):
-        if type(cognome) != str or cognome == "":
+        if not isinstance(cognome, str) or cognome == "":
             raise TypeError("Il cognome deve essere una stringa.")
 
         self.cognome = cognome
@@ -58,7 +58,7 @@ class Studente:
         return self.nome
     
     def set_nome(self, nome):
-        if type(nome) != str or nome == "":
+        if not isinstance(nome, str) or nome == "":
             raise TypeError("Il nome deve essere una stringa.")
 
         self.nome = nome
@@ -67,7 +67,7 @@ class Studente:
         return self.matricola
     
     def set_matricola(self, matricola):
-        if type(matricola) != int or matricola < 0:
+        if not isinstance(matricola, int) or matricola <= 0:
             raise TypeError("La matricola deve essere un intero positivo.")
         self.matricola = matricola
 
@@ -75,21 +75,21 @@ class Studente:
         return self.listaesami
     
     def set_listaesami(self, listaesami):
-        if type(listaesami) != list:
+        if not isinstance(listaesami, list):
             raise TypeError("La lista degli esami deve essere una lista di tuple.")
         if listaesami == []:
             self.listaesami = listaesami
         else:
             for esame in listaesami: # itero un controllo e vedo se ogni esame è una tupla di due elementi e controllo i tipi
-                if type(esame) != tuple and len(esame) != 2:
+                if not isinstance(esame, tuple) and len(esame) != 2:
                     raise TypeError("Gli elementi all'interno della lista degli esami devono essere tuple con due valori all'interno: codice e voto")
                 
                 codice = esame[0]
                 voto = esame[1]
                 
-                if type(codice) != str:
+                if not isinstance(codice, str):
                     raise TypeError("Il codice dell'esame deve essere una stringa.")
-                if type(voto) != int:
+                if not isinstance(voto, int):
                     raise TypeError("Il voto deve essere un intero.")
                 if voto < 18 or voto > 32: 
                     raise ValueError("Il voto deve essere un intero positivo maggiore o uguale a 18 e minore di 33.")
@@ -143,7 +143,7 @@ class Studente:
         # istruzione di ritorno scritta in questo modo per fattore stilistico
         # sennò la riga di codice veniva troppo lunga
         # concatenare tutte le uguaglianze restituirà un'unica risposta (True se sono lo stesso studente, False altrimenti)
-        if type(altroStudente) != Studente:
+        if not isinstance(altroStudente, Studente):
             return False
         else:
             return (self.cognome == altroStudente.get_cognome()
@@ -159,7 +159,7 @@ class Studente:
     :return: False se si è verificato un errore (es. il codice è già presente)"""
 
     def registra_esame(self, codice, voto):
-        if type(codice) != str or type(voto) != int or voto < 18  or voto > 32:
+        if not isinstance(codice, str) or not isinstance(voto, int) or voto < 18  or voto > 32:
             return False # il codice dell'esame deve essere una stringa e il voto deve essere un intero positivo maggiore o uguale di 18 e minore di 33
         
         for esame in self.listaesami:
@@ -176,7 +176,7 @@ class Studente:
     :return: False se si è verificato un errore (es. il codice non è presente)"""
 
     def modifica_voto(self, codice, voto):
-        if type(codice) != str or type(voto) != int or voto < 18 or voto > 32:
+        if not isinstance(codice, str) or not isinstance(voto, int) or voto < 18 or voto > 32:
             return False # il codice dell'esame deve essere una stringa e il voto deve essere un intero positivo e minore di 33
     
         if self.cancella_esame(codice) == True:  # chiamata al metodo (cancella_esame) + verifica se la cancellazione è andata a buon fine
@@ -191,7 +191,7 @@ class Studente:
     :return: False se si è verificato un errore (es. il codice non è presente)"""
 
     def cancella_esame(self, codice):
-        if type(codice) != str:
+        if not isinstance(codice, str):
             return False # il codice dell'esame deve essere una stringa
         for esame in self.listaesami:
             if codice == esame[0]: # verifico se il codice è presente
@@ -240,7 +240,7 @@ class Archivio:
     def inserisci(self, studente, note = ""):
         # verifico che lo studente sia effettivamente un oggetto della classe Studente,
         # se è gia presente e se le note sono di tipo stringa
-        if type(studente) == Studente and studente.matricola not in self.stud and type(note) == str:
+        if isinstance(studente, Studente) and studente.matricola not in self.stud and isinstance(note, str):
             self.stud[studente.matricola] = (studente, note)
             return True # l'inserimento è stato effettuato con successo
         else:
@@ -294,7 +294,7 @@ class Archivio:
 
     def modifica_note(self, matricola, nota):
         if matricola in self.stud:
-            if type(nota) != str:
+            if not isinstance(nota, str):
                 return False # la nota non è una stringa
             else:
                 self.stud[matricola] = (self.stud[matricola][0], nota) # riassegno i valori inserendo la nuova nota
@@ -395,7 +395,7 @@ class Archivio:
     :return lista: la lista degli studenti promossi con voto >= soglia"""
 
     def lista_studenti_promossi(self, codice, soglia = 18):
-        if type(codice) != str:
+        if not isinstance(codice, str):
             return False
         else:
             lista = []
