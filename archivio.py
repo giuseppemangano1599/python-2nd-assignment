@@ -91,7 +91,7 @@ class Studente:
                     raise TypeError("Il codice dell'esame deve essere una stringa.")
                 if not isinstance(voto, int):
                     raise TypeError("Il voto deve essere un intero.")
-                if voto < 18 or voto > 32: 
+                if not (18 <= voto <= 32): 
                     raise ValueError("Il voto deve essere un intero positivo maggiore o uguale a 18 e minore di 33.")
             self.listaesami = listaesami
 
@@ -121,20 +121,6 @@ class Studente:
         else:
             return f"{self.nome} {self.cognome} mat: {self.matricola} esami: no"
         
-        # precedentemente
-        '''if self.listaesami != []:
-            return (
-                str(self.nome) + " " + str(self.cognome) +
-                " mat: " + str(self.matricola) + " esami: " +
-                str(self.listaesami)
-                )'''
-    
-        """else:
-                return (
-                    str(self.nome) + " " + str(self.cognome) +
-                    " mat: " + str(self.matricola) + " esami: no"
-                    ) """
-
 
     """Restituisce True se self e altroStudente rappresentano lo stesso studente
     (stesso cognome, stesso nome, stessa matricola)"""
@@ -159,7 +145,7 @@ class Studente:
     :return: False se si è verificato un errore (es. il codice è già presente)"""
 
     def registra_esame(self, codice, voto):
-        if not isinstance(codice, str) or not isinstance(voto, int) or voto < 18  or voto > 32:
+        if not isinstance(codice, str) or not isinstance(voto, int) or 18 <= voto <= 32:
             return False # il codice dell'esame deve essere una stringa e il voto deve essere un intero positivo maggiore o uguale di 18 e minore di 33
         
         for esame in self.listaesami:
@@ -176,7 +162,7 @@ class Studente:
     :return: False se si è verificato un errore (es. il codice non è presente)"""
 
     def modifica_voto(self, codice, voto):
-        if not isinstance(codice, str) or not isinstance(voto, int) or voto < 18 or voto > 32:
+        if not isinstance(codice, str) or not isinstance(voto, int) or 18 <= voto <= 32:
             return False # il codice dell'esame deve essere una stringa e il voto deve essere un intero positivo e minore di 33
     
         if self.cancella_esame(codice) == True:  # chiamata al metodo (cancella_esame) + verifica se la cancellazione è andata a buon fine
@@ -309,8 +295,6 @@ class Archivio:
         stringa_stud = "" # stringa vuota dove man mano si accumulano gli studenti
         for studente in self.stud.values(): # itero sui valori del dizionario perché le informazioni dello studente risiedono all'interno del primo valore della chiave
             stringa_stud += f"{studente[0]}\n"
-            # precedentemente:
-            #stringa_stud += str(studente[0]) + "\n" 
         return stringa_stud
 
 
