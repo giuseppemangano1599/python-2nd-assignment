@@ -115,17 +115,25 @@ class Studente:
     def __str__(self):
         # istruzione di ritorno scritta in questo modo per fattore stilistico
         # sennò la riga di codice veniva troppo lunga
+
         if self.listaesami != []:
+            return f"{self.nome} {self.cognome} mat: {self.matricola} esami: {self.listaesami}"
+        else:
+            return f"{self.nome} {self.cognome} mat: {self.matricola} esami: no"
+        
+        # precedentemente
+        '''if self.listaesami != []:
             return (
                 str(self.nome) + " " + str(self.cognome) +
                 " mat: " + str(self.matricola) + " esami: " +
                 str(self.listaesami)
-                )
-        else:
-            return (
-                str(self.nome) + " " + str(self.cognome) +
-                " mat: " + str(self.matricola) + " esami: no"
-                )
+                )'''
+    
+        """else:
+                return (
+                    str(self.nome) + " " + str(self.cognome) +
+                    " mat: " + str(self.matricola) + " esami: no"
+                    ) """
 
 
     """Restituisce True se self e altroStudente rappresentano lo stesso studente
@@ -229,7 +237,7 @@ class Archivio:
     :return: True se l'inserimento è stato effettuato con successo,
     :return: False  se i parametri non hanno il tipo corretto o non sono corretti, oppure se la matricola è già presente"""
 
-    def inserisci(self, studente, note=""):
+    def inserisci(self, studente, note = ""):
         # verifico che lo studente sia effettivamente un oggetto della classe Studente,
         # se è gia presente e se le note sono di tipo stringa
         if type(studente) == Studente and studente.matricola not in self.stud and type(note) == str:
@@ -261,9 +269,9 @@ class Archivio:
 
     def get_note(self, matricola):
         if matricola in self.stud:
-            studente_info = self.stud.get(matricola)
-            if len(studente_info) == 2: # controllo che i valori della matricola siano 2 (oggetto studente e note)
-                return studente_info[1]  # restituisce le note (anche se la stringa è vuota)
+            info_studente = self.stud.get(matricola)
+            if len(info_studente) == 2: # controllo che i valori della matricola siano 2 (oggetto studente e note)
+                return info_studente[1]  # restituisce le note (anche se la stringa è vuota)
         else:
             return None # la matricola non è presente nel dizionario stud
 
@@ -300,7 +308,9 @@ class Archivio:
     def __str__ (self):
         stringa_stud = "" # stringa vuota dove man mano si accumulano gli studenti
         for studente in self.stud.values(): # itero sui valori del dizionario perché le informazioni dello studente risiedono all'interno del primo valore della chiave
-            stringa_stud += str(studente[0]) + "\n" # nel main non è richiesto di inserire le note (studente[1])
+            stringa_stud += f"{studente[0]}\n"
+            # precedentemente:
+            #stringa_stud += str(studente[0]) + "\n" 
         return stringa_stud
 
 
@@ -428,8 +438,7 @@ class Archivio:
         try:
             with open(nomefile, "w") as f:
                 for matricola, (studente, note) in self.stud.items(): # itero direttamente sugli elementi del dizionario
-                    lista_esami = str(studente.get_listaesami()) # chiamata al metodo (get_listaesami) della classe Studente
-                    linea = studente.cognome + ":" + studente.nome + ":" + str(studente.matricola) + ":" + lista_esami + ":" + note + "\n" # formattazione degli elementi della stringa con ":"
+                    linea = f"{studente.cognome}:{studente.nome}:{studente.matricola}:{studente.get_listaesami()}:{note}\n" # formattazione degli elementi della stringa con ":"
                     f.write(linea) # inserisco la linea corrispondente allo studente nel file
                 return True # il salvataggio è andato a buon fine
         except(IOError):
@@ -448,14 +457,18 @@ class Archivio:
             with open(nomefile, "r") as f:
                 for linea in f:
                     info_studente = linea.strip().split(":") # divido la linea in base ai due punti (in base alla formattazione utilizzata dal metodo salva)
+
                     # estraggo le informazioni dallo split
                     cognome = info_studente[0]
                     nome = info_studente[1]
                     matricola = int(info_studente[2])
 
-                    lista_esami = eval(info_studente[3]) # pur essendo un approccio rischioso, la funzione eval() riconosce la stringa info_studente[3] come una lista di tuple e la converte,
-                    # soluzione approcciata per immediatezza anche se poco sicura
-
+                    lista_esami = info_studente[3]
+                    if lista_esami.startswith("[") and lista_esami.endswith("]"): # verifica se è una potenziale lista
+                        lista_esami = eval(lista_esami) # pur essendo un approccio rischioso, la funzione eval() riconosce la stringa info_studente[3] come una lista di tuple e la converte, soluzione approcciata per immediatezza
+                    else:
+                        raise ValueError
+                    
                     note = info_studente[4]
                     studente = Studente(cognome, nome, matricola) # creo un nuovo oggetto Studente con le informazioni estratte e lo inserisco nell'archivio
                     studente.set_listaesami(lista_esami)

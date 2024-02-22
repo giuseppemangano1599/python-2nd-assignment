@@ -110,15 +110,15 @@ class myApp:
                 if note is None:
                     messagebox.showwarning("Inserimento annullato", "Inserimento annullato da parte dell'utente.")
                     break
-
+                # f"{cognome} {nome} - Matricola: {matricola} - Note: {note}"
                 if self.archivio.inserisci(studente, note) == True:
-                    self.box_studenti.insert(tk.END, cognome + " " + nome + " - Matricola: " + str(matricola) + " - Note: " + note)
-                    messagebox.showinfo("Inserimento avvenuto con successo", "Lo studente " + cognome + " " + nome + " è stato aggiunto con la matricola " + str(matricola) + ".")
+                    self.box_studenti.insert(tk.END, f"{cognome} {nome} - Matricola: {matricola} - Note: {note}")
+                    messagebox.showinfo("Inserimento avvenuto con successo", f"Lo studente {cognome} {nome} è stato aggiunto con la matricola {matricola}.")
                     break  # esco dal loop se l'inserimento è avvenuto con successo
                 else:
                     messagebox.showerror("Inserimento annullato", "Non è stato possibile inserire lo studente.\nRiprova.")
             except (ValueError,TypeError) as e:
-                    messagebox.showerror("Inserimento errato", "Non è stato possibile inserire lo studente.\n" + str(e))
+                    messagebox.showerror("Inserimento errato", f"Non è stato possibile inserire lo studente.\n{e}")
 
     def modifica_studente(self, evento):
         while True:
@@ -144,7 +144,7 @@ class myApp:
             studente = self.archivio.studente(matricola)
             if self.archivio.elimina(matricola) == True:
                 self.ricarica_box()
-                messagebox.showinfo("Eliminazione avvenuta con successo", "Lo studente " + studente.get_cognome() + " " + studente.get_nome() + " è stato eliminato.")
+                messagebox.showinfo("Eliminazione avvenuta con successo", f"Lo studente {studente.get_cognome()} {studente.get_nome()} è stato eliminato.")
                 break 
             else:
                 messagebox.showerror("Eliminazione annullata", "Non è stato possibile eliminare lo studente. Controlla se hai inserito correttamente la matricola.")
@@ -172,7 +172,7 @@ class myApp:
 
             if self.archivio.registra_esame(matricola, codice, voto) == True:
                 self.ricarica_box()
-                messagebox.showinfo("Inserimento avvenuto con successo", "L'esame " + codice + " è stato aggiunto per la matricola " + str(matricola) + " con la valutazione di " + str(voto) + ".")
+                messagebox.showinfo("Inserimento avvenuto con successo", f"L'esame {codice} è stato aggiunto per la matricola {matricola} con la valutazione di {voto}.")
                 break 
             else:
                 messagebox.showerror("Inserimento annullato.", "Non è stato possibile inserire l'esame. Controlla il voto o se hai inserito correttamente la matricola.")
@@ -198,7 +198,7 @@ class myApp:
 
             if self.archivio.modifica_voto(matricola, codice, voto) == True:
                 self.ricarica_box()
-                messagebox.showinfo("Modifica avvenuta con successo", "L'esame " + codice + " è stato modificato per la matricola " + str(matricola) + " con la valutazione di " + str(voto) + ".") 
+                messagebox.showinfo("Modifica avvenuta con successo", f"L'esame {codice} è stato modificato per la matricola {matricola} + con la valutazione di {voto}.") 
                 break
             else:
                 messagebox.showerror("Modifica annullata", "Non è stato possibile modificare l'esame. Controlla il voto (>= 18) o se hai inserito correttamente la matricola")
@@ -219,7 +219,7 @@ class myApp:
 
             if self.archivio.cancella_esame(matricola, codice) == True:
                 self.ricarica_box()
-                messagebox.showinfo("Eliminazione avvenuta con successo", "L'esame " + codice + " è stato eliminato per la matricola " + str(matricola) + ".")
+                messagebox.showinfo("Eliminazione avvenuta con successo", f"L'esame {codice} è stato eliminato per la matricola {matricola}.")
                 break 
             else:
                 messagebox.showerror("Eliminazione annullata", "Non è stato possibile eliminare l'esame. Controlla se lo studente ha sostenuto l'esame o se hai inserito correttamente la matricola")
@@ -236,7 +236,7 @@ class myApp:
             studente = self.archivio.studente(matricola)
             media = self.archivio.media(matricola)
             if media != None:
-                messagebox.showinfo("Calcolo della media", "Lo studente " + studente.get_cognome() + " " + studente.get_nome() + " ha la media del " + str(media) + ".") 
+                messagebox.showinfo("Calcolo della media", f"Lo studente {studente.get_cognome()} {studente.get_nome()} ha la media del {media}.") 
                 break
             else:
                 messagebox.showerror("Errore media", "Si è verificato un errore durante il calcolo della media.")
