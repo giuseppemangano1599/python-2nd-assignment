@@ -1,7 +1,7 @@
 🇮🇹
 Questo è il secondo assignment svolto durante il corso di Programmazione ed Analisi dei Dati.
 
-N.B. : La traccia dell'esame non è inclusa nel repository per privacy poiché documento ufficiale
+N.B. : La traccia dell'esame non è inclusa nel repository per privacy poiché documento ufficiale.
 
 
 🇬🇧
